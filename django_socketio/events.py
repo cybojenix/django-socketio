@@ -29,10 +29,10 @@ class Event(object):
     after a connection is established.
     """
 
-    def __init__(self, supports_channels=True):
+    def __init__(self, supports_channels=True, name=''):
         self.supports_channels = supports_channels
         self.handlers = []
-        self.name = ''
+        self.name = name
 
     def __call__(self, handler=None, channel=None):
         """
@@ -74,15 +74,10 @@ class Event(object):
                 handler(request, socket, context, *args)
 
 
-on_connect      = Event(False)  # request, socket, context
-on_message      = Event()       # request, socket, context, message
-on_subscribe    = Event()       # request, socket, context, channel
-on_unsubscribe  = Event()       # request, socket, context, channel
-on_error        = Event()       # request, socket, context, exception
-on_disconnect   = Event()       # request, socket, context
-on_finish       = Event()       # request, socket, context
-
-# Give each event a name attribute.
-for k, v in globals().items():
-    if isinstance(v, Event):
-        setattr(v, "name", k)
+on_connect = Event(False, name='on_connect')   # request, socket, context
+on_message = Event(name='on_message')          # request, socket, context, message
+on_subscribe = Event(name='on_subscribe')      # request, socket, context, channel
+on_unsubscribe = Event(name='on_unsubscribe')  # request, socket, context, channel
+on_error = Event(name='on_error')              # request, socket, context, exception
+on_disconnect = Event(name='on_disconnect')    # request, socket, context
+on_finish = Event(name='on_finish')            # request, socket, context
