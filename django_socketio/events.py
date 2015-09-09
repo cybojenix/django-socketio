@@ -5,6 +5,7 @@ import re
 class EventError(Exception):
     pass
 
+
 class Event(object):
     """
     Signal-like object for Socket.IO events that supports
@@ -31,6 +32,7 @@ class Event(object):
     def __init__(self, supports_channels=True):
         self.supports_channels = supports_channels
         self.handlers = []
+        self.name = ''
 
     def __call__(self, handler=None, channel=None):
         """
@@ -45,8 +47,9 @@ class Event(object):
         if channel:
             if not self.supports_channels:
                 raise EventError("The %s event does not support channels so "
-                                 "the handler `%s` could not be registered" %
-                                 self.name, handler.__name__)
+                                 "the handler `%s` could not be registered" % (
+                                     self.name, handler.__name__)
+                                 )
             channel = re.compile(channel)
         self.handlers.append((handler, channel))
 

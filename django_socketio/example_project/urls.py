@@ -1,14 +1,13 @@
 
-from django.conf import settings
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 
 from django.contrib import admin
-
+from .. import urls
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url("", include("django_socketio.urls")),
+    url("", include(urls.urlpatterns)),
     url("", include("chat.urls")),
-)
+]

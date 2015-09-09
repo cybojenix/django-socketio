@@ -1,6 +1,6 @@
 
 from re import match
-from thread import start_new_thread
+from _thread import start_new_thread
 from time import sleep
 from os import getpid, kill, environ
 from signal import SIGINT
@@ -21,6 +21,7 @@ from django_socketio.settings import HOST, PORT
 
 RELOAD = False
 
+
 def reload_watcher():
     global RELOAD
     while True:
@@ -28,6 +29,7 @@ def reload_watcher():
         if RELOAD:
             kill(getpid(), SIGINT)
         sleep(1)
+
 
 class Command(BaseCommand):
 
@@ -51,20 +53,20 @@ class Command(BaseCommand):
         environ["DJANGO_SOCKETIO_PORT"] = str(self.port)
 
         start_new_thread(reload_watcher, ())
+        bind = (self.addr, int(self.port))
+        print()
+        print("SocketIOServer running on %s:%s" % bind)
+        print()
+        handler = self.get_handler(*args, **options)
+        server = SocketIOServer(bind, handler, resource="socket.io")
         try:
-            bind = (self.addr, int(self.port))
-            print
-            print "SocketIOServer running on %s:%s" % bind
-            print
-            handler = self.get_handler(*args, **options)
-            server = SocketIOServer(bind, handler, resource="socket.io")
             server.serve_forever()
         except KeyboardInterrupt:
             client_end_all()
             if RELOAD:
                 server.kill()
-                print
-                print "Reloading..."
+                print()
+                print("Reloading...")
                 restart_with_reloader()
             else:
                 raise

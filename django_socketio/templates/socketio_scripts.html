@@ -1,4 +1,6 @@
-<script src="{{ STATIC_URL|default:MEDIA_URL }}js/socket.io.js"></script>
+{% load staticfiles %}
+
+<script src="{% staticfiles 'django_socketio/js/socket.io.js' %}"></script>
 <script>
 
 (function() {

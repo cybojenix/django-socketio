@@ -1,5 +1,5 @@
 
-from django_socketio import events
+from . import events
 
 
 # Maps open Socket.IO session IDs to request/socket pairs for
@@ -41,5 +41,3 @@ def client_end_all():
     """
     for request, socket, context in CLIENTS.values()[:]:
         client_end(request, socket, context)
-
-

@@ -1,10 +1,10 @@
 
 from django.http import HttpResponse
 
-from django_socketio import events
-from django_socketio.channels import SocketIOChannelProxy
-from django_socketio.clients import client_start, client_end
-from django_socketio.utils import format_log
+from . import events
+from .channels import SocketIOChannelProxy
+from .clients import client_start, client_end
+from .utils import format_log
 
 
 def socketio(request):
@@ -33,12 +33,12 @@ def socketio(request):
             messages = iter(messages)
             for message in messages:
                 if message == "__subscribe__":
-                    message = messages.next()
+                    message = next(messages)
                     message_type = "subscribe"
                     socket.subscribe(message)
                     events.on_subscribe.send(request, socket, context, message)
                 elif message == "__unsubscribe__":
-                    message = messages.next()
+                    message = next(messages)
                     message_type = "unsubscribe"
                     socket.unsubscribe(message)
                     events.on_unsubscribe.send(request, socket, context, message)
@@ -49,12 +49,12 @@ def socketio(request):
                     # handled consistently in the on_message event.
                     message_type = "message"
                     if message == "__array__":
-                        message = messages.next()
+                        message = next(messages)
                     events.on_message.send(request, socket, context, message)
                 log_message = format_log(request, message_type, message)
                 if log_message:
                     socket.handler.server.log.write(log_message)
-    except Exception, exception:
+    except Exception as exception:
         from traceback import print_exc
         print_exc()
         events.on_error.send(request, socket, context, exception)

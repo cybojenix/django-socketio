@@ -1,8 +1,8 @@
 
 from datetime import datetime
 
-from django_socketio.channels import CHANNELS
-from django_socketio.clients import CLIENTS
+from .channels import CHANNELS
+from .clients import CLIENTS
 
 
 class NoSocket(Exception):
@@ -28,7 +28,7 @@ def broadcast(message):
     including the socket itself.
     """
     try:
-        socket = CLIENTS.values()[0][1]
+        socket = list(CLIENTS.values())[0][1]
     except IndexError:
         raise NoSocket("There are no clients.")
     socket.send_and_broadcast(message)
@@ -41,7 +41,7 @@ def broadcast_channel(message, channel):
     """
     try:
         socket = CLIENTS[CHANNELS.get(channel, [])[0]][1]
-    except IndexError, KeyError:
+    except IndexError:
         raise NoSocket("There are no clients on the channel: " + channel)
     socket.send_and_broadcast_channel(message, channel)
 
